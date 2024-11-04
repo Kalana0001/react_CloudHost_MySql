@@ -5,10 +5,12 @@ const mysql = require("mysql2");
 const cors = require("cors");
 
 const db = mysql.createPool({
-    host: "localhost",
-    user: "root",
-    password: "KAlana#23",
-    database: "crud"
+    host: process.env.MYSQL_ADDON_HOST,
+    user: process.env.MYSQL_ADDON_USER,
+    password: process.env.MYSQL_ADDON_PASSWORD,
+    database: process.env.MYSQL_ADDON_DB,
+    port: process.env.MYSQL_ADDON_PORT,
+    connectionLimit: 10,  
 });
 
 // Test database connection
@@ -98,3 +100,5 @@ app.get("/", (req , res) => {
 app.listen(4050, () => {
     console.log("Server is running on port 4050");
 })
+
+module.exports = db.promise();
