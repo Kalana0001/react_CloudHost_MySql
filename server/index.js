@@ -23,83 +23,84 @@ db.getConnection((error) => {
     }
 });
 
-module.exports = db.promise();
-
 app.use(cors());
 app.use(express.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
-//api for select
-app.get("/api/get", (req , res) =>{
+// API for select
+app.get("/api/get", (req, res) => {
     const sqlGet = "SELECT * FROM deva";
     db.query(sqlGet, (error, result) => {
-        res.send(result);
-  });
-});
-
-//api for insert
-app.post("/api/post", (req , res) =>{
-    const {name, email, contact} =req.body;
-    const sqlInsert = "INSERT INTO deva (name, email, contact) VALUES (?, ?, ?)";
-    db.query(sqlInsert, [name, email, contact], (error, result) => {
-        if(error){
-            console.log(error);
-        }
-    });
-});
-
-//api for delete
-app.delete("/api/remove/:id", (req , res) =>{
-    const {id} =req.params;
-    const sqlRemove = "DELETE FROM deva WHERE id = ?";
-    db.query(sqlRemove, id, (error, result) => {
-        if(error){
-            console.log(error);
-        }
-    });
-});
-
-//get data to update api
-app.get("/api/get/:id", (req , res) =>{
-const {id} = req.params;
-    const sqlGet = "SELECT * FROM deva WHERE id = ?";
-    db.query(sqlGet, id, (error, result) => {
-    
         if (error) {
             console.log(error);
-        }
-        res.send(result);
-  });
-});
-
-//update api
-app.put("/api/update/:id", (req , res) =>{
-        const {id} = req.params;
-        const {name, email, contact} =req.body;
-        const sqlUpdate = "UPDATE deva SET name = ?, email = ?, contact = ? WHERE id = ?";
-        db.query(sqlUpdate, [name, email, contact, id], (error, result) => {
-        
-            if (error) {
-                console.log(error);
-            }
+            res.status(500).send("Error retrieving data");
+        } else {
             res.send(result);
-      });
+        }
     });
-    
-
-
-//api for check insert
-app.get("/", (req , res) => {
-   // const sqlInsert = "INSERT INTO deva (name, email, contact) VALUES ('kamal', 'kamal@gmail.com', 'ccbc')";
-    //db.query(sqlInsert, (error, result) => {
-       // console.log("error", error);
-       // console.log("result", result);
-       // res.send("Hello Express");
-  //  });
-  //res.send("Server is running");
-  res.send("Server is running");
 });
 
-app.listen(3306, () => {
-    console.log("Server is running on port 4050");
-})
+// API for insert
+app.post("/api/post", (req, res) => {
+    const {name, email, contact} = req.body;
+    const sqlInsert = "INSERT INTO deva (name, email, contact) VALUES (?, ?, ?)";
+    db.query(sqlInsert, [name, email, contact], (error, result) => {
+        if (error) {
+            console.log(error);
+            res.status(500).send("Error inserting data");
+        } else {
+            res.send("Data inserted successfully");
+        }
+    });
+});
+
+// API for delete
+app.delete("/api/remove/:id", (req, res) => {
+    const {id} = req.params;
+    const sqlRemove = "DELETE FROM deva WHERE id = ?";
+    db.query(sqlRemove, id, (error, result) => {
+        if (error) {
+            console.log(error);
+            res.status(500).send("Error deleting data");
+        } else {
+            res.send("Data deleted successfully");
+        }
+    });
+});
+
+// Get data for update
+app.get("/api/get/:id", (req, res) => {
+    const {id} = req.params;
+    const sqlGet = "SELECT * FROM deva WHERE id = ?";
+    db.query(sqlGet, id, (error, result) => {
+        if (error) {
+            console.log(error);
+            res.status(500).send("Error retrieving data");
+        } else {
+            res.send(result);
+        }
+    });
+});
+
+// Update API
+app.put("/api/update/:id", (req, res) => {
+    const {id} = req.params;
+    const {name, email, contact} = req.body;
+    const sqlUpdate = "UPDATE deva SET name = ?, email = ?, contact = ? WHERE id = ?";
+    db.query(sqlUpdate, [name, email, contact, id], (error, result) => {
+        if (error) {
+            console.log(error);
+            res.status(500).send("Error updating data");
+        } else {
+            res.send("Data updated successfully");
+        }
+    });
+});
+
+// Root endpoint
+app.get("/", (req, res) => {
+    res.send("Server is running");
+});
+
+// Export the app for serverless deployment
+module.exports = app;
