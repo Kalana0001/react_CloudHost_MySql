@@ -8,7 +8,7 @@ const Home = () => {
     const [data, setData] = useState([]);
 
     const loadData = async () => {
-        const response = await axios.get("http://localhost:4050/api/get");
+        const response = await axios.get("http://localhost:3306/api/get");
         setData(response.data);
     };
 
@@ -18,7 +18,7 @@ const Home = () => {
 
     const deleteData = (id) => {
         if(window.confirm("Are you sure?")){
-            axios.delete(`http://localhost:4050/api/remove/${id}`);
+            axios.delete(`http://localhost:3306/api/remove/${id}`);
             toast.success("Data Deleted Successfully");
             setTimeout(() => loadData(), 500);
         }
