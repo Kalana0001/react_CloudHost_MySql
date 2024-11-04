@@ -100,6 +100,6 @@ app.get("/", (req , res) => {
   res.send("Server is running");
 });
 
-app.listen(4050, () => {
+app.listen(3306, () => {
     console.log("Server is running on port 4050");
 })
