@@ -6,10 +6,10 @@ const cors = require("cors");
 require("dotenv").config(); 
 
 const db = mysql.createPool({
-    host: "bypbuakjbj4aojc3xysv-mysql.services.clever-cloud.com",
-    user: "ubakq9k8gp7etyh9",
-    password: "3myXmISYs6o4w8a9cHyx",
-    database: "bypbuakjbj4aojc3xysv",
+    host: process.env.MYSQL_ADDON_HOST,
+    user: process.env.MYSQL_ADDON_USER,
+    password: process.env.MYSQL_ADDON_PASSWORD,
+    database: process.env.MYSQL_ADDON_DB,
     connectionLimit: 10,  
 });
 
