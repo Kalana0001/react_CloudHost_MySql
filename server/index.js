@@ -3,6 +3,7 @@ const app = express();
 const bodyParser = require("body-parser");
 const mysql = require("mysql2");
 const cors = require("cors");
+require("dotenv").config(); 
 
 const db = mysql.createPool({
     host: "bypbuakjbj4aojc3xysv-mysql.services.clever-cloud.com",
