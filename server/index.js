@@ -1,9 +1,10 @@
 const express = require("express");
-const app = express();
 const bodyParser = require("body-parser");
 const mysql = require("mysql2");
 const cors = require("cors");
-require("dotenv").config(); 
+require("dotenv").config();
+
+const app = express();
 
 const db = mysql.createPool({
     host: process.env.DB_HOST,
@@ -11,7 +12,7 @@ const db = mysql.createPool({
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
     waitForConnections: true,
-    connectionLimit: 10,  
+    connectionLimit: 10,
     queueLimit: 0
 });
 
@@ -24,84 +25,87 @@ db.getConnection((error) => {
     }
 });
 
+// Middleware
 app.use(cors());
 app.use(express.json());
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 
-//api for select
-app.get("/api/get", (req , res) =>{
+// API for select
+app.get("/api/get", (req, res) => {
     const sqlGet = "SELECT * FROM deva";
     db.query(sqlGet, (error, result) => {
+        if (error) {
+            console.error("Error fetching data:", error);
+            return res.status(500).send("Error fetching data");
+        }
         res.send(result);
-  });
+    });
 });
 
-//api for insert
-app.post("/api/post", (req , res) =>{
-    const {name, email, contact} =req.body;
+// API for insert
+app.post("/api/post", (req, res) => {
+    const { name, email, contact } = req.body;
     const sqlInsert = "INSERT INTO deva (name, email, contact) VALUES (?, ?, ?)";
     db.query(sqlInsert, [name, email, contact], (error, result) => {
-        if(error){
-            console.log(error);
+        if (error) {
+            console.error("Error inserting data:", error);
+            return res.status(500).send("Error inserting data");
         }
+        res.send("Data inserted successfully");
     });
 });
 
-//api for delete
-app.delete("/api/remove/:id", (req , res) =>{
-    const {id} =req.params;
+// API for delete
+app.delete("/api/remove/:id", (req, res) => {
+    const { id } = req.params;
     const sqlRemove = "DELETE FROM deva WHERE id = ?";
     db.query(sqlRemove, id, (error, result) => {
-        if(error){
-            console.log(error);
+        if (error) {
+            console.error("Error removing data:", error);
+            return res.status(500).send("Error removing data");
         }
+        res.send("Data removed successfully");
     });
 });
 
-//get data to update api
-app.get("/api/get/:id", (req , res) =>{
-const {id} = req.params;
+// Get data to update API
+app.get("/api/get/:id", (req, res) => {
+    const { id } = req.params;
     const sqlGet = "SELECT * FROM deva WHERE id = ?";
     db.query(sqlGet, id, (error, result) => {
-    
         if (error) {
-            console.log(error);
+            console.error("Error fetching data for update:", error);
+            return res.status(500).send("Error fetching data");
         }
         res.send(result);
-  });
-});
-
-//update api
-app.put("/api/update/:id", (req , res) =>{
-        const {id} = req.params;
-        const {name, email, contact} =req.body;
-        const sqlUpdate = "UPDATE deva SET name = ?, email = ?, contact = ? WHERE id = ?";
-        db.query(sqlUpdate, [name, email, contact, id], (error, result) => {
-        
-            if (error) {
-                console.log(error);
-            }
-            res.send(result);
-      });
     });
-    
-
-
-//api for check insert
-app.get("/", (req , res) => {
-   // const sqlInsert = "INSERT INTO deva (name, email, contact) VALUES ('kamal', 'kamal@gmail.com', 'ccbc')";
-    //db.query(sqlInsert, (error, result) => {
-       // console.log("error", error);
-       // console.log("result", result);
-       // res.send("Hello Express");
-  //  });
-  //res.send("Server is running");
-  res.send("Server is running");
 });
 
-app.listen(4050, () => {
-    console.log("Server is running on port 4050");
-})
+// Update API
+app.put("/api/update/:id", (req, res) => {
+    const { id } = req.params;
+    const { name, email, contact } = req.body;
+    const sqlUpdate = "UPDATE deva SET name = ?, email = ?, contact = ? WHERE id = ?";
+    db.query(sqlUpdate, [name, email, contact, id], (error, result) => {
+        if (error) {
+            console.error("Error updating data:", error);
+            return res.status(500).send("Error updating data");
+        }
+        res.send("Data updated successfully");
+    });
+});
 
+// API for health check
+app.get("/", (req, res) => {
+    res.send("Server is running");
+});
+
+// Start server
+const PORT = process.env.PORT || 4050; // Use PORT from environment variables or default to 4050
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
+
+// Export for potential testing
 module.exports = db.promise();
 module.exports = app;
