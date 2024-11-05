@@ -6,6 +6,7 @@ require("dotenv").config();
 
 const app = express();
 
+// Create a connection pool
 const db = mysql.createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USERNAME,
@@ -26,7 +27,10 @@ db.getConnection((error) => {
 });
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: '*', // Adjust this for production to your frontend URL
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+}));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
