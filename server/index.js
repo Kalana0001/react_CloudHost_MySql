@@ -102,3 +102,4 @@ app.listen(4050, () => {
 })
 
 module.exports = db.promise();
+module.exports = app;
